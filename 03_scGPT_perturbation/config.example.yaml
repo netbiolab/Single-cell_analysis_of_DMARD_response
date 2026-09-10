@@ -1,0 +1,165 @@
+paths:
+  input_h5ad: data/normalized_annotated.h5ad
+  finetune_input_h5ad: data/historical_IFN_CM.h5ad
+  original_seurat_rds: data/original_seurat.rds
+  pretrained_model_dir: models/whole_human
+  finetuned_checkpoint: outputs/finetune/model_e48.pt
+  output_dir: outputs
+  feature_genes: resources/features_2989.txt
+  gene_manifest: resources/perturbation_genes.tsv
+  decoder_predictions: outputs/decoder/SIGLEC1/pred_responder_pert.h5ad
+  enrichr_cache: data/spc_top20_selected_genes_GO_BP_EnrichR_qvalue_sorted.xlsx
+  distance_change_scores: data/distance_change_gene_scores.xlsx
+metadata:
+  cell_type: scvi_fine_CT
+  ifn_cm_label: IFN cm
+  response: Response_Final
+  responder_label: Good
+  batch: Batch
+  timepoint: TimePoint
+  pre_label: Pre
+prepare:
+  feature_mode: archived
+  filter_timepoint: false
+finetune:
+  hparams:
+    seed: 0
+    dataset_name: IFN_CM
+    do_train: true
+    mask_ratio_local: 0.15
+    mask_ratio_global: 0.15
+    epochs: 50
+    lr: 0.0001
+    batch_size: 64
+    layer_size: 512
+    nlayers: 12
+    nhead: 8
+    dropout: 0.2
+    n_bins: 51
+    input_style: binned
+    input_emb_style: continuous
+    pad_token: <pad>
+    special_tokens:
+    - <pad>
+    - <cls>
+    - <eoc>
+    cell_emb_style: cls
+    load_model: models/whole_human
+    GEPC: true
+    DSBN: true
+    ecs_thres: 0.8
+    dab_weight: 1.0
+    mask_ratio: 0.4
+    mask_value: -1
+    pad_value: -2
+    schedule_ratio: 0.9
+    save_eval_interval: 5
+    log_interval: 100
+    amp: true
+    subset_hvg: true
+    n_hvg: 3000
+    per_seq_batch_sample: true
+    explicit_zero_prob: true
+    fast_transformer: true
+  world_size_recorded: 7
+  checkpoint_epoch_recorded: 48
+  use_prepared_input: false
+  cells_recorded: 3240
+  retained_genes_recorded: 2937
+perturbation:
+  genes:
+  - SIGLEC1
+  - SERPINB2
+  - THBD
+  all_manifest_genes: true
+  target_value: 0
+  expression_source: X
+  seed: 42
+  n_bins: 51
+  include_zero_gene: true
+  append_cls: true
+  subset_hvg_on_extraction: false
+  batch_size: 32
+  amp: true
+  fast_transformer: true
+src:
+  top_n:
+  - 20
+  primary_top_n: 20
+  primary_pooling: mean
+  primary_distance: euclidean
+  exclude_target_gene: true
+  min_original_nonzero: 207
+knn:
+  k: 100
+  nr_condition: gene_zero
+  min_responder_pert_nonzero: 135
+  min_nonresponder_gene_zero_exclusive: 117
+  target_gene: SIGLEC1
+  metrics:
+  - euclidean
+  primary_summary: mean
+decoder:
+  source_status: recovered_train_predict_expression
+  genes:
+  - SIGLEC1
+  device: auto
+  target_mode: data
+  target_source: layers['data']
+  batch_size: 64
+  epochs: 200
+  lr: 0.001
+  weight_decay: 0.0001
+  hidden_dim: 512
+  dropout: 0.1
+  num_layers: 2
+  patience: 10
+  seed: 42
+  num_workers: 4
+  loss_type: huber
+  fp16: true
+  train_val_ratio: 0.9
+  grad_clip: 1.0
+  early_stop_min_delta: 0.0
+  best_epochs_recorded:
+    SIGLEC1: 111
+aucell:
+  target_gene: SIGLEC1
+  gene_set:
+  - CMPK2
+  - DDX58
+  - GMPR
+  - HERC5
+  - HERC6
+  - HRASLS2
+  - HSH2D
+  - IFI27
+  - IFI6
+  - IFIT1
+  - IFIT3
+  - ISG15
+  - LAMP3
+  - MX1
+  - MX2
+  - OAS1
+  - OAS2
+  - OASL
+  - RSAD2
+  - USP18
+  seed_base: 1
+  ranking_seed: null
+  trim: 0.1
+  auc_max_rank_fraction: 0.05
+  filter: nofilter
+  n_iterations: 1000
+figure5:
+  panel_assignment_status: selected_manuscript_figures
+  targets:
+  - SERPINB2
+  - THBD
+  - SIGLEC1
+gobp:
+  database: GO_Biological_Process_2021
+  top_terms: 10
+  q_reference_line: 0.05
+  mode: cached_by_default

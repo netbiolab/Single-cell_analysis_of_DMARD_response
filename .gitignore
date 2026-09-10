@@ -1,0 +1,46 @@
+# Local inputs, outputs, and external dependencies (at any depth)
+inputs/
+data/
+outputs/
+models/
+external/
+wandb/
+
+# Local configuration and secrets
+config.yaml
+config.local*.yaml
+*.local.yaml
+.env
+.env.*
+!.env.example
+
+# Python / R / editor caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ipynb_checkpoints/
+.Rhistory
+.RData
+.Rproj.user/
+.vscode/
+.idea/
+.DS_Store
+*.log
+*.tmp
+*.swp
+*~
+
+# Expression data, networks, embeddings, and model checkpoints
+*.rds
+*.RDS
+*.rda
+*.h5ad
+*.h5Seurat
+*.h5
+*.hdf5
+*.npy
+*.npz
+*.pt
+*.pth
+*.ckpt
+*.csv.gz

@@ -1,0 +1,10 @@
+config.yaml
+config.local*.yaml
+inputs/
+outputs/
+*.rds
+*.h5ad
+*.log
+.Rhistory
+.RData
+__pycache__/

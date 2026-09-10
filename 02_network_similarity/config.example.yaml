@@ -1,0 +1,78 @@
+# Confirmed figure replay: original unprefixed networks + revised response manifest.
+paths:
+  seurat: null
+  patient_manifest: inputs/patient_manifest.csv
+  archived_networks: inputs/networks
+  output: outputs/figure_replay
+  schumannet_source: null
+metadata:
+  patient: Sample_Name
+  fine_cell_type: scvi_fine_CT
+  major_cell_type: scvi_major_CT
+  response: Response_Final
+  responder_label: Good
+  nonresponder_label: Bad
+network:
+  mode: archived
+  filename_template: "{cell_type}_sample_fine_cell_type_sorted_net_list.rds"
+  assay: logcounts
+  gene_filter: intersect_with_HNv3
+  correlation_method: not_applicable
+  additional_lls_threshold: null
+  reduce_dim: 50
+  reduce_max_iter: 10
+  svd_algorithm: 0
+  reduce_seed: 0
+  global_seed: null  # Original code did not call set.seed().
+  min_edge_weight: 2
+  topological_specificity: true
+  topological_samples: 1000
+  threads: 8
+  expected_actionet: "2.0.18"
+  expected_scinet: "1.0"
+similarity:
+  metric: euclidean
+  weight: LLS
+  edge_universe: union_within_cell_type
+  absent_edge_weight: 0
+  ordered_within_group_pairs: true
+  normalize: false
+  missing_network_policy: legacy_null_distance_zero  # Historical NULL subtraction gives 0.
+  # Set to error to reject incomplete patient coverage (not a figure replay).
+statistics:
+  test: wilcox.test
+  alternative: two.sided
+  paired: false
+  exact: null
+  continuity_correction: true
+  p_adjust: none
+  permutations: 0
+  bootstrap_replicates: 0
+robustness:
+  lopo: false
+plot:
+  bubble_size: legacy_rounded_p
+cell_type_order:
+  - "effector memory CD4T"
+  - "naive CD4T"
+  - "NFKB2+ CD4T"
+  - "Treg"
+  - "proliferating T"
+  - "effector CD8T"
+  - "GZMK CD8T"
+  - "MAIT"
+  - "naive CD8T"
+  - "NKT"
+  - "CD56 bright NK"
+  - "cytotoxic NK"
+  - "secreting NK"
+  - "CCL+ cm"
+  - "IFN cm"
+  - "RELB+ cm"
+  - "S100+ cm"
+  - "intermediate cm"
+  - "Non classical"
+  - "DC"
+  - "IgD+IgM+ B cell"
+  - "Memory B cell"
+  - "TGFB1+ activated B cell"

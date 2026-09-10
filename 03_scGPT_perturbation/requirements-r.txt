@@ -1,0 +1,18 @@
+# Separate Conda environment for AUCell and GO BP; NOT a pip requirements file.
+# conda create -n scgpt-perturbation-r --override-channels -c conda-forge -c bioconda --file requirements-r.txt
+# Versions match the selected installed R libraries; packages were namespace-load checked.
+# Direct package versions only: conda-meta is stale for some source-updated R packages.
+# A fresh channel solve and full R numerical pipeline have not been run.
+conda-forge::r-base=4.3.1
+conda-forge::r-seurat=5.1.0
+bioconda::bioconductor-aucell=1.24.0
+conda-forge::r-data.table=1.14.8
+conda-forge::r-ggplot2=3.5.1
+conda-forge::r-yaml=2.3.7
+conda-forge::r-reticulate=1.32.0
+conda-forge::r-openxlsx=4.2.5.2
+conda-forge::r-dplyr=1.1.4
+conda-forge::r-stringr=1.5.0
+conda-forge::r-scales=1.3.0
+conda-forge::r-forcats=1.0.0
+conda-forge::r-enrichr=3.2

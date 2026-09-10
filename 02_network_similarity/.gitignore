@@ -1,0 +1,14 @@
+inputs/
+outputs/
+config.yaml
+*.local.yaml
+*.rds
+*.RData
+*.rda
+*.h5ad
+*.h5
+*.csv.gz
+.Rhistory
+.Rproj.user/
+.DS_Store
+external/

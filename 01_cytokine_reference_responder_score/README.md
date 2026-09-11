@@ -2,7 +2,7 @@
 
 This directory contains code for calculating IFNα−IFNγ reference-based Responder Scores and comparing responders (R) with nonresponders (NR).
 
-Scores are calculated from mean expression profiles for each patient within each fine cell type. The workflow includes reference projection, pooled score-distribution comparison, patient-median comparison, and a cell-type-resolved rank-biserial analysis with exact synchronized patient-label permutation.
+Scores are calculated from mean expression profiles for each patient within each fine cell type. The workflow includes reference projection, pooled score-distribution comparison and a cell-type-resolved rank-biserial analysis with exact synchronized patient-label permutation.
 
 ## Workflow
 
@@ -126,23 +126,7 @@ Fewer than the configured minimum number of shared genes returns a missing score
 
 A two-sided Kolmogorov–Smirnov test compares R and NR cosine-score distributions across patient × cell-type profiles. The implementation uses `ks.test(..., exact = NULL)`, allowing R to select its default exact or asymptotic calculation.
 
-Profiles from the same patient share the patient as their sampling unit. The pooled test describes score distributions; the following analyses use patients as the label-permutation unit.
-
-### Patient-median comparison
-
-For each patient, take the median cosine score across available fine cell types, giving each type equal weight and leaving missing types unimputed. The test statistic is:
-
-```text
-T_median = median(patient scores in R) - median(patient scores in NR)
-```
-
-Enumerate all assignments preserving the number of R and NR patients. The two-sided p-value is the fraction satisfying:
-
-```text
-abs(T_permuted) >= abs(T_observed) - sqrt(.Machine$double.eps)
-```
-
-This comparison is controlled by `statistics.patient_exact_permutation`.
+Profiles from the same patient share the patient as their sampling unit. The pooled test describes score distributions; the following analysis uses patients as the label-permutation unit.
 
 ### Cell-type-resolved rank-biserial comparison
 
@@ -172,7 +156,7 @@ T_permuted >= T_observed - tolerance
 
 All assignments, including the observed assignment, remain in the denominator. The excluded cell types may differ between assignments. This comparison is controlled by `statistics.rank_biserial_permutation`.
 
-Both exact tests use complete enumeration, without a +1 correction, bootstrap, or multiple-testing adjustment. No random sampling is performed, so no random seed is required.
+The exact test uses complete enumeration, without a +1 correction, bootstrap, or multiple-testing adjustment. No random sampling is performed, so no random seed is required.
 
 ---
 
@@ -190,7 +174,6 @@ Analysis and plotting parameters are defined in [config.example.yaml](config.exa
 | `statistics.permutations` | `6435` | Expected number of completely enumerated assignments |
 | `rank_biserial.trim_fraction` | `0.1` | Fraction removed from each tail |
 | `rank_biserial.alternative` | `greater` | Responder-positive upper-tail test |
-| `statistics.bootstrap_replicates` | `0` | No bootstrap |
 | `statistics.seed` | `null` | No RNG used |
 | `plot.bins` | `30` | Score-distribution histogram bins |
 
@@ -204,10 +187,10 @@ Cohort and evaluability expectations are recorded under `statistics.expected_*`,
 | --- | --- |
 | `01_prepare_data.R` | Validate metadata and prepare patient × cell-type mean expression |
 | `02_calculate_responder_score.R` | Load or build references and calculate cosine/Pearson scores |
-| `03_statistical_analysis.R` | Run pooled KS, patient-median, and trimmed rank-biserial comparisons |
+| `03_statistical_analysis.R` | Run pooled KS and trimmed rank-biserial comparisons |
 | `04_plot_results.R` | Generate score-distribution and reference-projection figures |
 | `R/common.R` | Shared configuration, reference, projection, and aggregation functions |
-| `R/patient_robustness.R` | Patient-matrix validation and exact patient-label tests |
+| `R/patient_robustness.R` | Patient-matrix validation and the synchronized rank-biserial exact test |
 | `tests/test_numerics.R` | Synthetic numerical checks |
 
 ---
@@ -245,9 +228,6 @@ Rscript tests/test_numerics.R
 | `projection_scores.csv` | Reference projections, scores, and classifications |
 | `selected_genes.csv` | Reference genes, weights, ordering, and presence in expression data |
 | `statistical_tests.csv`, `group_summary.csv` | Pooled KS result and response-group summaries |
-| `robustness_patient_level_scores.csv` | Patient medians and available cell-type counts |
-| `robustness_exact_permutation_summary.csv` | Patient-median exact-test summary |
-| `robustness_exact_permutation_null_distribution.csv` | Patient-median permutation statistics |
 | `rank_biserial_celltype_effects.csv` | Within-type effects, pairwise probabilities, and observed trim status |
 | `rank_biserial_trimmed_mean_exact_summary.csv` | Trimmed effect and one-sided exact p-value |
 | `rank_biserial_synchronized_null_distribution.csv` | Synchronized permutation statistics and evaluable-type counts |

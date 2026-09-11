@@ -11,8 +11,7 @@ read_config <- function(path) {
   stopifnot(cfg$workflow == "centroid")
   stopifnot(cfg$centroid$expression_aggregation == "mean_RNA_data",
     cfg$centroid$weights == "mean_log_fc", !cfg$centroid$positive_logfc_filter,
-    !cfg$centroid$zscore, cfg$statistics$p_adjust == "none",
-    cfg$statistics$bootstrap_replicates == 0)
+    !cfg$centroid$zscore, cfg$statistics$p_adjust == "none")
   dir.create(cfg$paths$output, recursive = TRUE, showWarnings = FALSE)
   cfg
 }

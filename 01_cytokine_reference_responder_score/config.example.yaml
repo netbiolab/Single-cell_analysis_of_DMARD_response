@@ -1,4 +1,4 @@
-# Centroid analysis, patient-median comparison, and manuscript trimmed rank-biserial test.
+# Centroid analysis and manuscript trimmed rank-biserial test.
 # Relative paths resolve from the YAML directory.
 workflow: centroid
 paths:
@@ -24,21 +24,17 @@ centroid:
   minimum_cells: 10
   minimum_shared_genes: 10
   expression_aggregation: mean_RNA_data
-  patient_aggregation: median_available_fine_celltypes
   weights: mean_log_fc
   positive_logfc_filter: false
   zscore: false
 statistics:
   group_comparison: true
   group_test: ks_two_sided_R_default_exact
-  patient_exact_permutation: true
   expected_patients: 15
   expected_R: 8
   expected_NR: 7
   permutations: 6435
   permutation_type: complete_enumeration_no_plus_one
-  comparison_tolerance: 1.4901161193847656e-08
-  bootstrap_replicates: 0
   seed: null
   p_adjust: none
   rank_biserial_permutation: true

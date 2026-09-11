@@ -47,8 +47,6 @@ statistics:
   exact: null
   continuity_correction: true
   p_adjust: none
-  permutations: 0
-  bootstrap_replicates: 0
 robustness:
   lopo: false
 plot:
@@ -71,7 +69,7 @@ cell_type_order:
   - "IFN cm"
   - "RELB+ cm"
   - "S100+ cm"
-  - "imtermediate cm"
+  - "intermediate cm"
   - "Non classical"
   - "DC"
   - "IgD+IgM+ B cell"

@@ -25,8 +25,7 @@ read_config <- function(path) {
     identical(cfg$similarity$normalize,FALSE), cfg$similarity$absent_edge_weight == 0,
     cfg$similarity$missing_network_policy %in% c("legacy_null_distance_zero","error"),
     identical(cfg$statistics$paired,FALSE), is.null(cfg$statistics$exact),
-    isTRUE(cfg$statistics$continuity_correction), cfg$statistics$permutations == 0,
-    cfg$statistics$bootstrap_replicates == 0,
+    isTRUE(cfg$statistics$continuity_correction),
     cfg$network$min_edge_weight >= 0, cfg$network$threads >= 1,
     cfg$network$topological_samples >= 1,
     cfg$plot$bubble_size %in% c("legacy_rounded_p","per_cell_type_raw_p"))

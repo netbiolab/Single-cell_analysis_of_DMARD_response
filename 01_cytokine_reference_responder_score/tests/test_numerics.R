@@ -1,5 +1,5 @@
 #!/usr/bin/env Rscript
-# Synthetic tests for projection, aggregation and the two retained patient tests.
+# Synthetic tests for projection, aggregation and the synchronized patient-label test.
 # No study data or clinical identifiers are included.
 script <- sub('^--file=','',grep('^--file=',commandArgs(),value=TRUE)[1])
 root <- dirname(dirname(normalizePath(script)))
@@ -59,15 +59,10 @@ stopifnot(isTRUE(all.equal(result$null$global_statistic,unname(expected_null),to
  sum(result$null$is_observed_assignment)==1L)
 p_expected <- mean(expected_null>=result$summary$observed_statistic-sqrt(.Machine$double.eps))
 stopifnot(identical(result$summary$exact_empirical_p_upper_tail,p_expected))
-# Retained patient-median test uses a separate two-sided statistic.
-median_result <- patient_median_test(prepared,cfg)
-values <- apply(scores,1L,median,na.rm=TRUE)
-expected <- apply(assignments,2L,function(ix) median(values[ix])-median(values[-ix]))
-stopifnot(isTRUE(all.equal(unname(median_result$null$median_difference_R_minus_NR),unname(expected),tolerance=0)))
 # Projection input validation catches duplicate and conflicting patient records.
 dat <- data.frame(donor=rep(rownames(scores),23),scvi_fine_CT=rep(colnames(scores),each=15),
  response=rep(ifelse(group=='R','Good','Bad'),23),Responder_score_cosine=as.vector(scores))
 dat <- dat[is.finite(dat$Responder_score_cosine),]
 stopifnot(identical(prepare_patient_matrix(dat,cfg)$scores,scores))
 assert_error(prepare_patient_matrix(rbind(dat,dat[1,]),cfg))
-cat('PASS: centroid selection/projection/means; rank-biserial tie handling; 6435 synchronized nulls; per-assignment eligibility/trimming; one-sided p; patient-median test; input validation\n')
+cat('PASS: centroid selection/projection/means; rank-biserial tie handling; 6435 synchronized nulls; per-assignment eligibility/trimming; one-sided p; input validation\n')

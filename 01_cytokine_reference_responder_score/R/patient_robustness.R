@@ -1,6 +1,5 @@
-# Patient-unit tests on the fixed donor x fine-cell-type cosine-score table.
-# Sources: patient_level_responder_score_robustness.R (patient median only),
-# rank_biserial_global_aggregation_8tests_exact_permutation.R (test 6 only).
+# Cell-type-resolved patient-label test on the fixed cosine-score table.
+# Source: rank_biserial_global_aggregation_8tests_exact_permutation.R (test 6 only).
 # No cell observations or cell-type labels are shuffled independently of patients.
 prepare_patient_matrix <- function(dat, cfg) {
   required <- c('donor', 'scvi_fine_CT', 'response', 'Responder_score_cosine')
@@ -24,32 +23,6 @@ prepare_patient_matrix <- function(dat, cfg) {
   scores <- matrix(NA_real_, length(patients), length(celltypes), dimnames=list(patients,celltypes))
   scores[cbind(match(dat$donor,patients), match(dat$scvi_fine_CT,celltypes))] <- dat$Responder_score_cosine
   list(scores=scores, group=observed_group)
-}
-
-patient_median_test <- function(prepared, cfg) {
-  # Retained analysis 3: median across available fine cell types per patient.
-  values <- apply(prepared$scores, 1L, median, na.rm=TRUE)
-  groups <- prepared$group
-  # Original patient-median source orders R first, then NR, each by patient ID.
-  ix <- order(match(groups,c('R','NR')),names(values))
-  values <- values[ix]; groups <- groups[ix]
-  patients <- names(values)
-  assignments <- combn(seq_along(values), cfg$statistics$expected_R)
-  if (ncol(assignments) != cfg$statistics$permutations) stop('Unexpected exact assignment count')
-  observed <- median(values[groups=='R']) - median(values[groups=='NR'])
-  null <- apply(assignments, 2L, function(i) median(values[i])-median(values[-i]))
-  extreme <- abs(null) >= abs(observed)-cfg$statistics$comparison_tolerance
-  observed_index <- apply(assignments, 2L, function(i) identical(i,unname(which(groups=='R'))))
-  stopifnot(sum(observed_index)==1L)
-  list(
-    patients=data.frame(donor=patients, group=groups, patient_responder_score=unname(values),
-      n_fine_celltypes=unname(rowSums(is.finite(prepared$scores))[patients])),
-    summary=data.frame(statistic='median(patient score in R) - median(patient score in NR)',
-      observed_difference_R_minus_NR=observed, n_exact_assignments=ncol(assignments),
-      n_as_or_more_extreme_two_sided=sum(extreme), exact_empirical_p_two_sided=mean(extreme)),
-    null=data.frame(permutation_id=seq_along(null), median_difference_R_minus_NR=null,
-      as_or_more_extreme_two_sided=extreme, is_observed_assignment=observed_index)
-  )
 }
 
 rank_biserial_metrics <- function(scores, ranks, is_R) {

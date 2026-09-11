@@ -46,8 +46,6 @@ statistics:
   exact: null
   continuity_correction: true
   p_adjust: none
-  permutations: 0
-  bootstrap_replicates: 0
 robustness:
   lopo: false
 plot:
